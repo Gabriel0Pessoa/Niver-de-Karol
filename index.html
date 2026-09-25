@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aniversário da Ana Karolina</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --vinho: #6E1D38;
+    --vinho-suave: #9C4362;
+    --dourado: #A9824E;
+    --creme: #FAF6F1;
+    --linha: #E4D9D0;
+    --texto: #2B1A20;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --creme: #221419;
+      --texto: #F1E4E8;
+      --linha: #3D2A32;
+    }
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top: env(safe-area-inset-top, 0px);}
+  body{
+    margin:0;
+    background: var(--creme);
+    color: var(--texto);
+    font-family:'Jost', sans-serif;
+    font-weight:400;
+    display:flex;
+    justify-content:center;
+    min-height:100%;
+  }
+  .card{
+    width:100%;
+    max-width:460px;
+    padding: 56px 32px 44px;
+  }
+  .marca{ display:flex; justify-content:center; margin-bottom:22px; }
+  .marca svg{ width:34px; height:34px; }
+  h1{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    font-size: clamp(2.6rem, 10vw, 3.4rem);
+    line-height:1;
+    text-align:center;
+    color: var(--vinho);
+    margin: 0 0 10px;
+    letter-spacing:.01em;
+  }
+  .sub{
+    text-align:center;
+    font-size:.95rem;
+    color: var(--vinho-suave);
+    margin: 0 0 8px;
+    letter-spacing:.04em;
+  }
+  .divisor{
+    width:56px;
+    height:1px;
+    background: var(--dourado);
+    margin: 28px auto;
+    border:none;
+  }
+  .detalhes{
+    margin-bottom: 8px;
+  }
+  .detalhes dl{ margin:0; }
+  .detalhes .item{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--linha);
+    font-size:.95rem;
+  }
+  .detalhes .item:last-child{ border-bottom:none; }
+  .detalhes dt{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:1.05rem;
+    color: var(--vinho-suave);
+  }
+  .detalhes dd{ margin:0; text-align:right; color:var(--texto); }
+  .msg{
+    text-align:center;
+    line-height:1.7;
+    font-size:.92rem;
+    color: var(--texto);
+    opacity:.85;
+    margin: 28px 0 26px;
+  }
+  form{ display:flex; flex-direction:column; gap:16px; margin-bottom: 8px;}
+  label{ font-size:.8rem; color: var(--vinho-suave); margin-bottom:6px; display:block; letter-spacing:.02em; }
+  input[type=text]{
+    width:100%;
+    padding: 11px 4px;
+    border: none;
+    border-bottom: 1px solid var(--linha);
+    background: transparent;
+    color: var(--texto);
+    font-family:'Jost', sans-serif;
+    font-size: 1rem;
+  }
+  input:focus{ outline:none; border-bottom-color: var(--vinho); }
+  .opcoes{ display:flex; gap:12px; }
+  .opcoes button{
+    flex:1;
+    padding: 12px;
+    border-radius: 2px;
+    border: 1px solid var(--vinho-suave);
+    background: transparent;
+    color: var(--vinho);
+    font-family:'Jost', sans-serif;
+    font-size: .88rem;
+    letter-spacing:.03em;
+    cursor:pointer;
+    transition: background .15s ease, color .15s ease;
+  }
+  .opcoes button[aria-pressed="true"]{ background: var(--vinho); color: #fff; border-color: var(--vinho); }
+  .enviar{
+    margin-top:6px;
+    padding: 14px;
+    border-radius: 2px;
+    border: 1px solid var(--vinho);
+    background: var(--vinho);
+    color:#fff;
+    font-family:'Jost', sans-serif;
+    font-size:.92rem;
+    letter-spacing:.05em;
+    cursor:pointer;
+  }
+  .enviar:active{ opacity:.85; }
+  .status{
+    text-align:center;
+    font-size:.85rem;
+    min-height: 1.2em;
+    margin-top:2px;
+    font-style:italic;
+    font-family:'Cormorant Garamond', serif;
+  }
+  .status.ok{ color: var(--vinho-suave); }
+  .status.err{ color: var(--vinho); }
+  .secao{
+    padding-top: 28px;
+    margin-top: 28px;
+    border-top: 1px solid var(--linha);
+  }
+  .secao h2{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:500;
+    font-style:italic;
+    font-size:1.3rem;
+    color: var(--vinho);
+    margin: 0 0 4px;
+    text-align:center;
+  }
+  .secao .legenda{
+    font-size:.8rem;
+    color: var(--vinho-suave);
+    text-align:center;
+    margin-bottom:18px;
+    letter-spacing:.02em;
+  }
+  ul.convidados, ul.lista-presentes{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column;}
+  ul.convidados li, ul.lista-presentes li{
+    padding: 10px 2px;
+    border-bottom: 1px solid var(--linha);
+    font-size:.92rem;
+    text-align:center;
+    color: var(--texto);
+  }
+  ul.convidados li:last-child, ul.lista-presentes li:last-child{ border-bottom:none; }
+  .vazio{ font-size:.88rem; opacity:.65; font-style:italic; font-family:'Cormorant Garamond', serif; }
+  .rodape{
+    text-align:center;
+    font-size:.72rem;
+    letter-spacing:.04em;
+    color: var(--vinho-suave);
+    opacity:.7;
+    margin-top: 34px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="marca">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M50 10c-1 12-4 24-7 32" stroke="var(--dourado)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M50 10c5 5 10 12 11 20" stroke="var(--dourado)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="34" cy="60" r="17" fill="none" stroke="var(--vinho)" stroke-width="2"/>
+      <circle cx="63" cy="64" r="17" fill="none" stroke="var(--vinho)" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <h1>Ana Karolina</h1>
+  <p class="sub">vinte e dois anos</p>
+
+  <hr class="divisor">
+
+  <div class="detalhes">
+    <dl>
+      <div class="item"><dt>Data</dt><dd id="d-data">10/02/2026</dd></div>
+      <div class="item"><dt>Horário</dt><dd id="d-hora">18h</dd></div>
+      <div class="item"><dt>Local</dt><dd id="d-local">Boi e Brasa</dd></div>
+      <div class="item"><dt>Comemoração</dt><dd>Rodízio de carne</dd></div>
+      <div class="item"><dt>Valor</dt><dd>R$ 40,00 por pessoa (cada um paga o seu)</dd></div>
+    </dl>
+  </div>
+
+  <p class="msg">Vamos comemorar com um rodízio de carne no Boi e Brasa. Cada pessoa paga o seu: R$ 40,00.<br>Por favor, confirme sua presença abaixo.</p>
+
+  <form id="rsvp-form">
+    <div>
+      <label for="nome">Nome</label>
+      <input type="text" id="nome" name="nome" placeholder="Seu nome completo" required>
+    </div>
+
+    <div class="opcoes" role="group" aria-label="Você vai?">
+      <button type="button" data-val="sim" aria-pressed="false">Confirmo presença</button>
+      <button type="button" data-val="nao" aria-pressed="false">Não poderei ir</button>
+    </div>
+
+    <button type="submit" class="enviar">Enviar</button>
+    <p class="status" id="status" role="status" aria-live="polite"></p>
+  </form>
+
+  <div class="secao">
+    <h2>Confirmados</h2>
+    <p class="legenda" id="contagem"></p>
+    <ul class="convidados" id="lista-convidados"></ul>
+  </div>
+
+  <div class="secao">
+    <h2>Sugestões de presente</h2>
+    <p class="legenda">Não é obrigatório, mas se quiser ajudar a escolher:</p>
+    <ul class="lista-presentes">
+      <li>Perfume</li>
+      <li>Vale-presente</li>
+      <li>Livro</li>
+      <li>Acessório (bolsa, joia, óculos)</li>
+      <li>Contribuição para a festa/viagem</li>
+    </ul>
+  </div>
+
+  <p class="rodape">COM CARINHO, PARA ANA KAROLINA</p>
+</div>
+
+<script>
+(function(){
+  // Endpoint do backend. Como o servidor entrega este arquivo e a API
+  // juntos, um caminho relativo funciona tanto local quanto já publicado.
+  var API_URL = '/api/rsvp';
+  var STATE_KEY = 'rsvp-ana-karolina-v1';
+  var pendingVal = null;
+
+  var listaEl = document.getElementById('lista-convidados');
+  var contagemEl = document.getElementById('contagem');
+  var statusEl = document.getElementById('status');
+  var form = document.getElementById('rsvp-form');
+  var btnSim = document.querySelector('button[data-val="sim"]');
+  var btnNao = document.querySelector('button[data-val="nao"]');
+
+  function readLocalState(){
+    try {
+      var raw = localStorage.getItem(STATE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch(e) {}
+    return [];
+  }
+
+  function saveLocalState(lista){
+    try { localStorage.setItem(STATE_KEY, JSON.stringify(lista)); } catch(e) {}
+  }
+
+  function render(lista){
+    listaEl.innerHTML = '';
+    var confirmados = (lista || []).filter(function(p){ return p.vai; });
+    if (confirmados.length === 0){
+      var li = document.createElement('li');
+      li.className = 'vazio';
+      li.style.border = 'none';
+      li.textContent = 'Ainda ninguém confirmou — seja a primeira pessoa.';
+      listaEl.appendChild(li);
+      contagemEl.textContent = '';
+    } else {
+      contagemEl.textContent = confirmados.length + (confirmados.length === 1 ? ' pessoa confirmada' : ' pessoas confirmadas');
+      confirmados.forEach(function(p){
+        var li = document.createElement('li');
+        li.textContent = p.nome;
+        listaEl.appendChild(li);
+      });
+    }
+  }
+
+  // Carrega a lista do servidor ao abrir a página
+  fetch(API_URL)
+    .then(function(r){ return r.json(); })
+    .then(function(lista){ render(lista); saveLocalState(lista); })
+    .catch(function(){ render(readLocalState()); });
+
+  btnSim.addEventListener('click', function(){
+    pendingVal = 'sim';
+    btnSim.setAttribute('aria-pressed','true');
+    btnNao.setAttribute('aria-pressed','false');
+  });
+  btnNao.addEventListener('click', function(){
+    pendingVal = 'nao';
+    btnNao.setAttribute('aria-pressed','true');
+    btnSim.setAttribute('aria-pressed','false');
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var nome = document.getElementById('nome').value.trim();
+    if (!nome){ statusEl.className = 'status err'; statusEl.textContent = 'Escreva seu nome antes de confirmar.'; return; }
+    if (!pendingVal){ statusEl.className = 'status err'; statusEl.textContent = 'Escolha se você vai ou não.'; return; }
+
+    var entrada = { nome: nome, vai: pendingVal === 'sim' };
+
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entrada)
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(lista){
+        render(lista);
+        saveLocalState(lista);
+        statusEl.className = 'status ok';
+        statusEl.textContent = entrada.vai ? 'Presença confirmada. Obrigada.' : 'Registrado. Obrigada por avisar.';
+      })
+      .catch(function(){
+        var lista = readLocalState().filter(function(p){ return p.nome.toLowerCase() !== nome.toLowerCase(); });
+        lista.push(entrada);
+        saveLocalState(lista);
+        render(lista);
+        statusEl.className = 'status err';
+        statusEl.textContent = 'Não consegui falar com o servidor — salvei só neste aparelho.';
+      });
+
+    form.reset();
+    pendingVal = null;
+    btnSim.setAttribute('aria-pressed','false');
+    btnNao.setAttribute('aria-pressed','false');
+  });
+})();
+</script>
+</body>
+</html>
