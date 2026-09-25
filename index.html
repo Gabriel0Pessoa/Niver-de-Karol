@@ -42,9 +42,60 @@
     width:100%;
     max-width:460px;
     padding: 56px 32px 44px;
+    animation: convite-entra .75s ease-out both;
+  }
+  @keyframes convite-entra{
+    from{opacity:0; transform:translateY(14px);}
+    to{opacity:1; transform:translateY(0);}
   }
   .marca{ display:flex; justify-content:center; margin-bottom:22px; }
   .marca svg{ width:34px; height:34px; }
+  .foto-aniversariante{
+    position:relative;
+    width:min(220px, 72%);
+    aspect-ratio:4 / 5;
+    margin:0 auto 24px;
+    padding:7px;
+    border:1px solid var(--dourado);
+    background:var(--creme);
+    box-shadow:0 8px 24px rgb(43 26 32 / 10%);
+    animation: retrato-entra .85s .12s ease-out both;
+  }
+  @keyframes retrato-entra{
+    from{opacity:0; transform:translateY(10px) scale(.98);}
+    to{opacity:1; transform:translateY(0) scale(1);}
+  }
+  .foto-aniversariante img,
+  .foto-placeholder{
+    width:100%;
+    height:100%;
+  }
+  .foto-aniversariante img{display:block; object-fit:cover;}
+  .foto-placeholder{
+    display:none;
+    place-content:center;
+    gap:8px;
+    background:radial-gradient(ellipse at 50% 38%, #fff 0, var(--creme) 72%);
+    color:var(--vinho-suave);
+    text-align:center;
+  }
+  .sem-foto img{display:none;}
+  .sem-foto .foto-placeholder{display:grid;}
+  .foto-placeholder strong{
+    font-family:'Cormorant Garamond', serif;
+    font-size:3.6rem;
+    font-weight:500;
+    line-height:1;
+    color:var(--vinho);
+  }
+  .foto-placeholder span{font-size:.7rem;}
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:.01ms !important;
+      animation-iteration-count:1 !important;
+      scroll-behavior:auto !important;
+    }
+  }
   h1{
     font-family:'Cormorant Garamond', serif;
     font-weight:500;
@@ -224,6 +275,14 @@
     </svg>
   </div>
 
+  <figure class="foto-aniversariante sem-foto">
+    <img id="foto-aniversariante" src="/assets/foto-aniversariante.jpg" alt="Foto da Ana Karolina">
+    <div class="foto-placeholder" aria-hidden="true">
+      <strong>AK</strong>
+      <span>SUA FOTO AQUI</span>
+    </div>
+  </figure>
+
   <h1>Ana Karolina</h1>
   <p class="sub">vinte e dois anos</p>
 
@@ -296,6 +355,11 @@
   var form = document.getElementById('rsvp-form');
   var btnSim = document.querySelector('button[data-val="sim"]');
   var btnNao = document.querySelector('button[data-val="nao"]');
+  var foto = document.getElementById('foto-aniversariante');
+
+  foto.addEventListener('load', function(){
+    foto.parentElement.classList.remove('sem-foto');
+  });
 
   function readLocalState(){
     try {
