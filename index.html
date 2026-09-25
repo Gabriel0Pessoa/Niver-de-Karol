@@ -97,6 +97,29 @@
     opacity:.85;
     margin: 28px 0 26px;
   }
+  .atalhos{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+    margin: 0 0 24px;
+  }
+  .atalhos .legenda{ margin:0; }
+  .atalho-presentes{
+    display:inline-block;
+    padding:10px 16px;
+    border:1px solid var(--vinho-suave);
+    border-radius:2px;
+    color:var(--vinho);
+    font-size:.88rem;
+    text-decoration:none;
+    transition:background .15s ease, color .15s ease;
+  }
+  .atalho-presentes:hover,
+  .atalho-presentes:focus-visible{
+    background:var(--vinho);
+    color:#fff;
+  }
   form{ display:flex; flex-direction:column; gap:16px; margin-bottom: 8px;}
   label{ font-size:.8rem; color: var(--vinho-suave); margin-bottom:6px; display:block; letter-spacing:.02em; }
   input[type=text]{
@@ -218,6 +241,11 @@
 
   <p class="msg">Vamos comemorar com um rodízio de carnes no Boi e Brasa. Cada pessoa paga o seu: R$ 40,00.<br>Por favor, confirme sua presença abaixo.</p>
 
+  <div class="atalhos">
+    <p class="legenda" id="contagem" aria-live="polite">0 pessoas confirmadas</p>
+    <a class="atalho-presentes" href="#secao-presentes">Ver lista de presentes</a>
+  </div>
+
   <form id="rsvp-form">
     <div>
       <label for="nome">Nome</label>
@@ -235,11 +263,10 @@
 
   <div class="secao">
     <h2>Confirmados</h2>
-    <p class="legenda" id="contagem"></p>
     <ul class="convidados" id="lista-convidados"></ul>
   </div>
 
-  <div class="secao">
+  <div class="secao" id="secao-presentes">
     <h2>Sugestões de presente</h2>
     <p class="legenda">Não é obrigatório, mas se quiser ajudar a escolher:</p>
     <ul class="lista-presentes">
@@ -285,15 +312,14 @@
   function render(lista){
     listaEl.innerHTML = '';
     var confirmados = (lista || []).filter(function(p){ return p.vai; });
+    contagemEl.textContent = confirmados.length + (confirmados.length === 1 ? ' pessoa confirmada' : ' pessoas confirmadas');
     if (confirmados.length === 0){
       var li = document.createElement('li');
       li.className = 'vazio';
       li.style.border = 'none';
       li.textContent = 'Ainda ninguém confirmou — seja a primeira pessoa.';
       listaEl.appendChild(li);
-      contagemEl.textContent = '';
     } else {
-      contagemEl.textContent = confirmados.length + (confirmados.length === 1 ? ' pessoa confirmada' : ' pessoas confirmadas');
       confirmados.forEach(function(p){
         var li = document.createElement('li');
         li.textContent = p.nome;
