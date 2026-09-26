@@ -7,11 +7,28 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
 
-// Credenciais vêm das variáveis de ambiente configuradas no Render
-// (não fica nada sensível escrito no código).
+// Credenciais vêm das variáveis de ambiente configuradas no Render.
+const redisUrl = (process.env.UPSTASH_REDIS_REST_URL || '').trim();
+const redisToken = (process.env.UPSTASH_REDIS_REST_TOKEN || '').trim();
+
+if (!redisUrl || !redisToken) {
+  throw new Error('Configure UPSTASH_REDIS_REST_URL e UPSTASH_REDIS_REST_TOKEN no ambiente.');
+}
+
+let parsedRedisUrl;
+try {
+  parsedRedisUrl = new URL(redisUrl);
+} catch {
+  throw new Error('UPSTASH_REDIS_REST_URL deve ser a URL REST completa do Upstash.');
+}
+
+if (parsedRedisUrl.protocol !== 'https:' || !parsedRedisUrl.hostname.endsWith('.upstash.io')) {
+  throw new Error('UPSTASH_REDIS_REST_URL deve começar com https:// e usar o host .upstash.io.');
+}
+
 const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+  url: redisUrl,
+  token: redisToken,
 });
 
 const CHAVE = 'convidados';
