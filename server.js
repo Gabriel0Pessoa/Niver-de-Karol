@@ -1,47 +1,38 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
+const { Redis } = require('@upstash/redis');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+app.use(express.static(__dirname));
+
+// Credenciais vêm das variáveis de ambiente configuradas no Render
+// (não fica nada sensível escrito no código).
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
 });
 
-const DB_FILE = path.join(__dirname, 'convidados.json');
-
-function lerConvidados() {
-  try {
-    return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-  } catch (e) {
-    return [];
-  }
-}
-
-function salvarConvidados(lista) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(lista, null, 2));
-}
+const CHAVE = 'convidados';
 
 // Lista todos os convidados que já responderam
-app.get('/api/rsvp', (req, res) => {
-  res.json(lerConvidados());
+app.get('/api/rsvp', async (req, res) => {
+  const lista = (await redis.get(CHAVE)) || [];
+  res.json(lista);
 });
 
 // Recebe uma confirmação (ou recusa) de presença
-app.post('/api/rsvp', (req, res) => {
+app.post('/api/rsvp', async (req, res) => {
   const { nome, vai } = req.body || {};
   if (!nome || typeof nome !== 'string' || typeof vai !== 'boolean') {
     return res.status(400).json({ erro: 'Envie "nome" (texto) e "vai" (true ou false).' });
   }
 
-  let lista = lerConvidados();
-  // Se a pessoa já respondeu antes, atualiza a resposta dela em vez de duplicar
+  let lista = (await redis.get(CHAVE)) || [];
   lista = lista.filter(p => p.nome.trim().toLowerCase() !== nome.trim().toLowerCase());
   lista.push({ nome: nome.trim(), vai, data: new Date().toISOString() });
-  salvarConvidados(lista);
+  await redis.set(CHAVE, lista);
 
   res.json(lista);
 });
